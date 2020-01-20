@@ -208,7 +208,7 @@ def fnSetOptions():
         { 'Param': ('-s', '--string'), 'action': 'store', 'type': 'string', 'dest': 'o_sString', 'metavar': '<String>', 'help': 'Set string.' },
         { 'Param': ('-i', '--int'), 'action': 'store', 'type': 'int', 'dest': 'o_iInt', 'metavar': '<Int>', 'help': 'Set int.' },
     ]
-    usage = '%prog [options] (start|stop|status|restart)\n\tex) %prog start\\'
+    usage = '%prog [options] (start|stop|status|restart)\n\tex) %prog start'
 
     parser = OptionParser(usage = usage, version = '%prog ' + PROG_VER)
 

@@ -21,7 +21,7 @@ import daemon
 from daemon import pidfile
 import time
 
-PROG_NAME = '<PROGRAM_NAME>'
+PROG_NAME = '<PROGRAM_NAME>' ### CHANGE!!!
 PROG_VER = '1.0'
 LOGGER = None
 LOG_FILENAME = ('%s.log' % (PROG_NAME.replace(' ', '-').lower()))
@@ -33,18 +33,16 @@ CONFIG = {}
 def fnDo():
     global LOGGER
 
-    while True:
-        try:
-            time.sleep(3)
-            LOGGER.info('running...')
-        except SystemExit as e:
-            LOGGER.info(' * Signal Exit...')
-            LOGGER.info(' * Terminate function...')
-            break
-        except:
-            LOGGER.error(' *** Daemon error!')
-            LOGGER.debug(traceback.format_exc())
-            return False
+    try:
+        time.sleep(3)
+        LOGGER.info('running...')
+    except SystemExit:
+        LOGGER.info(' * Signal Exit...')
+    except:
+        LOGGER.error(' *** Daemon error!')
+        LOGGER.debug(traceback.format_exc())
+    finally:
+        LOGGER.info(' * Terminate function...')
     return True
 
 def fnStartDaemon():
@@ -133,7 +131,9 @@ def fnMain(argOptions, argArgs):
 
     try:
         if cmd == 'start':
-            fnStartDaemon()
+            if fnGetConfig(parsed_options.o_sConfigFilePath):
+                LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
+                fnStartDaemon()
         elif cmd == 'stop':
             fnStopDaemon()
         elif cmd == 'restart':
@@ -237,7 +237,5 @@ if __name__ == '__main__':
     (parsed_options, argvs) = fnGetOptions(fnSetOptions())
     if fnInit(parsed_options):
         LOGGER.info('Start %s...' % (PROG_NAME))
-        if fnGetConfig(parsed_options.o_sConfigFilePath):
-            LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
-            fnMain(parsed_options, argvs)
+        fnMain(parsed_options, argvs)
         LOGGER.info('Terminate %s...' % (PROG_NAME))

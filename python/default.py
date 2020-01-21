@@ -18,7 +18,7 @@ import logging.handlers
 import json
 import traceback
 
-PROG_NAME = '<PROGRAM_NAME>'
+PROG_NAME = '<PROGRAM_NAME>' ### CHANGE!!!
 PROG_VER = '1.0'
 LOGGER = None
 LOG_FILENAME = ('%s.log' % (PROG_NAME.replace(' ', '-').lower()))

@@ -17,18 +17,131 @@ import logging
 import logging.handlers
 import json
 import traceback
+import daemon
+from daemon import pidfile
+import time
 
 PROG_NAME = '<PROGRAM_NAME>' ### CHANGE!!!
 PROG_VER = '1.0'
 LOGGER = None
 LOG_FILENAME = ('%s.log' % (PROG_NAME.replace(' ', '-').lower()))
+LOG_FILE_NO = None
+PID_FILENAME = ('pid_%s.pid' % (PROG_NAME.replace(' ', '-').lower()))
 CONFIG = {}
+
+#=============================== Daemon Functions ===============================#
+def fnDo():
+    global LOGGER
+
+    try:
+        time.sleep(3)
+        LOGGER.info('running...')
+    except SystemExit:
+        LOGGER.info(' * Signal Exit...')
+    except:
+        LOGGER.error(' *** Daemon error!')
+        LOGGER.debug(traceback.format_exc())
+    finally:
+        LOGGER.info(' * Terminate function...')
+    return True
+
+def fnStartDaemon():
+    global LOGGER
+    global LOG_FILE_NO
+    global PID_FILENAME
+
+    try:
+        context = daemon.DaemonContext(
+            working_directory='./',
+            umask=0o002,
+            pidfile=pidfile.TimeoutPIDLockFile(PID_FILENAME)
+        )
+        context.files_preserve = LOG_FILE_NO
+        with context:
+            LOGGER.info(' * START Daemon!')
+            fnDo()
+    except:
+        LOGGER.error(' *** Error Start Daemon!!!')
+        LOGGER.debug(traceback.format_exc())
+
+    return True
+
+def fnStopDaemon():
+    global LOGGER
+    global PID_FILENAME
+
+    try:
+        LOGGER.info(' * STOP Daemon!')
+        if os.path.isfile(PID_FILENAME):
+            pid = None
+            f = open(PID_FILENAME, 'r')
+
+            for line in f:
+                pid = line.strip()
+            
+            f.close()
+
+            if pid is not None:
+                LOGGER.info(' * Kill Daemon PID(%s)' % (pid))
+                os.system(('kill %s' % (pid)))
+            else:
+                LOGGER.info(' * Daemon PID is None')
+        else:
+            LOGGER.info(' * Daemon is not running...')
+    except Exception as e:
+        LOGGER.error(' *** Error Stop Daemon!!!')
+        LOGGER.error(e)
+        LOGGER.debug(traceback.format_exc())
+
+    return True
+
+def fnStatusDaemon():
+    global LOGGER
+    global PID_FILENAME
+
+    try:
+        LOGGER.info(' * CHECK STATUS Daemon!')
+        if os.path.isfile(PID_FILENAME):
+            pid = None
+            f = open(PID_FILENAME, 'r')
+
+            for line in f:
+                pid = line.strip()
+            
+            f.close()
+
+            if pid is not None:
+                LOGGER.info(' * Daemon PID(%s)' % (pid))
+            else:
+                LOGGER.info(' * Daemon PID is None')
+        else:
+            LOGGER.info(' * Daemon is not running...')
+    except Exception as e:
+        LOGGER.error(' *** Error Status Daemon!!!')
+        LOGGER.error(e)
+        LOGGER.debug(traceback.format_exc())
+
+    return True
 
 #=============================== Main Functions ===============================#
 def fnMain(argOptions, argArgs):
     global LOGGER
 
+    cmd = argArgs[0].lower()
+
     try:
+        if cmd == 'start':
+            if fnGetConfig(parsed_options.o_sConfigFilePath):
+                LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
+                fnStartDaemon()
+        elif cmd == 'stop':
+            fnStopDaemon()
+        elif cmd == 'restart':
+            fnStopDaemon()
+            fnStartDaemon()
+        elif cmd == 'status':
+            fnStatusDaemon()
+
         return True
     except:
         raise
@@ -55,6 +168,7 @@ def fnInit(argOptions):
     global PROG_NAME
     global LOGGER
     global LOG_FILENAME
+    global LOG_FILE_NO
 
     LOGGER = logging.getLogger(PROG_NAME.replace(' ', ''))
 
@@ -75,6 +189,8 @@ def fnInit(argOptions):
     LOGGER.addHandler(file_handler)
     LOGGER.addHandler(stream_handler)
 
+    LOG_FILE_NO = [ file_handler.stream.fileno() ]
+
     return True
 
 #=============================== OptionParser Functions ===============================#
@@ -92,7 +208,7 @@ def fnSetOptions():
         { 'Param': ('-s', '--string'), 'action': 'store', 'type': 'string', 'dest': 'o_sString', 'metavar': '<String>', 'help': 'Set string.' },
         { 'Param': ('-i', '--int'), 'action': 'store', 'type': 'int', 'dest': 'o_iInt', 'metavar': '<Int>', 'help': 'Set int.' },
     ]
-    usage = '%prog [options] <File or Dir path>\n\tex) %prog test\\'
+    usage = '%prog [options] (start|stop|status|restart)\n\tex) %prog start'
 
     parser = OptionParser(usage = usage, version = '%prog ' + PROG_VER)
 
@@ -121,7 +237,5 @@ if __name__ == '__main__':
     (parsed_options, argvs) = fnGetOptions(fnSetOptions())
     if fnInit(parsed_options):
         LOGGER.info('Start %s...' % (PROG_NAME))
-        if fnGetConfig(parsed_options.o_sConfigFilePath):
-            LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
-            fnMain(parsed_options, argvs)
+        fnMain(parsed_options, argvs)
         LOGGER.info('Terminate %s...' % (PROG_NAME))

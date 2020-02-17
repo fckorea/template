@@ -1,12 +1,13 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-var cors = require('cors');
-var passport = require('./util/passport');
+let express = require('express');
+let path = require('path');
+let cookieParser = require('cookie-parser');
+let logger = require('morgan');
+let session = require('express-session');
+let cors = require('cors');
+let robots = require('express-robots-txt');
+let passport = require('./util/passport');
 
-var app = express();
+let app = express();
 
 app.use(session({
 	key: 'xkey',
@@ -21,12 +22,20 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({ credentials: true, origin: true }));
 
+// Set robots
+app.use(robots(path.join(__dirname, 'robots.txt')));
+
 passport.setup(app);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 require('./routes/api/v1')(app);
 require('./routes/api/v2')(app);
+
+// for react or angular router
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 app.use(function(req, res, next) {
 	res.status(404).send('Something Broke!!!');

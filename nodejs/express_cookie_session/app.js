@@ -1,15 +1,14 @@
-let app = express();
 let express = require('express');
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
 let session = require('express-session');
-var rateLimit = require("express-rate-limit");
+let rateLimit = require("express-rate-limit");
 let cors = require('cors');
 let robots = require('express-robots-txt');
 let passport = require('./util/passport');
 
-var limiter = rateLimit({
+let limiter = rateLimit({
   windowMs: 1 * 1000, // 1sec
   max: 10, // limit each API key to 10 requests per windowMs
   keyGenerator: function(req) {
@@ -17,7 +16,7 @@ var limiter = rateLimit({
   },
 });
 
-var app = express();
+let app = express();
 
 app.use(session({
   key: 'xkey',

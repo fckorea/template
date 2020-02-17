@@ -21,7 +21,7 @@ import traceback
 PROG_NAME = '<PROGRAM_NAME>' ### CHANGE!!!
 PROG_VER = '1.0'
 LOGGER = None
-LOG_FILENAME = ('%s.log' % (PROG_NAME.replace(' ', '-').lower()))
+LOG_FILENAME = os.path.abspath('./logs/%s.log' % (PROG_NAME.replace(' ', '-').lower()))
 CONFIG = {}
 
 #=============================== Main Functions ===============================#
@@ -30,8 +30,12 @@ def fnMain(argOptions, argArgs):
 
     try:
         return True
+        
     except:
-        raise
+        LOGGER.error(' *** Error in Main.')
+        LOGGER.debug(traceback.format_exc())
+    finally:
+        return True
 
 #=============================== Config & Init Function ===============================#
 def fnGetConfig(argConfigFilePath):
@@ -55,6 +59,9 @@ def fnInit(argOptions):
     global PROG_NAME
     global LOGGER
     global LOG_FILENAME
+
+    if os.path.isdir(os.path.abspath('./logs')) is False:
+        os.mkdir(os.path.abspath('./logs'))
 
     LOGGER = logging.getLogger(PROG_NAME.replace(' ', ''))
 

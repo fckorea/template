@@ -24,9 +24,9 @@ import time
 PROG_NAME = '<PROGRAM_NAME>' ### CHANGE!!!
 PROG_VER = '1.0'
 LOGGER = None
-LOG_FILENAME = ('%s.log' % (PROG_NAME.replace(' ', '-').lower()))
+LOG_FILENAME = os.path.abspath('./logs/%s.log' % (PROG_NAME.replace(' ', '-').lower()))
 LOG_FILE_NO = None
-PID_FILENAME = ('pid_%s.pid' % (PROG_NAME.replace(' ', '-').lower()))
+PID_FILENAME = os.path.abspath('pid_%s.pid' % (PROG_NAME.replace(' ', '-').lower()))
 CONFIG = {}
 
 #=============================== Daemon Functions ===============================#

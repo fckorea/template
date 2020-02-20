@@ -1,0 +1,9 @@
+.App {
+  text-align: center;
+  font-family: 'Nanum Gothic', sans-serif;
+}
+
+.App-Container {
+  padding: 10px;
+  flex-grow: 1;
+}

@@ -21,7 +21,8 @@ import traceback
 PROG_NAME = '<PROGRAM_NAME>' ### CHANGE!!!
 PROG_VER = '1.0'
 LOGGER = None
-LOG_FILENAME = os.path.abspath('./logs/%s.log' % (PROG_NAME.replace(' ', '-').lower()))
+LOG_DIR = './logs'
+LOG_FILENAME = os.path.abspath('%s/%s.log' % (LOG_DIR, PROG_NAME.replace(' ', '-').lower()))
 CONFIG = {}
 
 #=============================== Main Functions ===============================#
@@ -58,10 +59,11 @@ def fnGetConfig(argConfigFilePath):
 def fnInit(argOptions):
     global PROG_NAME
     global LOGGER
+    global LOG_DIR
     global LOG_FILENAME
 
-    if os.path.isdir(os.path.abspath('./logs')) is False:
-        os.mkdir(os.path.abspath('./logs'))
+    if os.path.isdir(os.path.abspath(LOG_DIR)) is False:
+        os.mkdir(os.path.abspath(LOG_DIR))
 
     LOGGER = logging.getLogger(PROG_NAME.replace(' ', ''))
 

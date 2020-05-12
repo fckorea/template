@@ -196,6 +196,10 @@ def fnInit(argOptions):
 
   LOG_FILE_NO = [ file_handler.stream.fileno() ]
 
+  if argOptions.o_sConfigFilePath is not None:
+    LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
+    fnGetConfig(parsed_options.o_sConfigFilePath)
+
   return True
 
 #=============================== OptionParser Functions ===============================#
@@ -225,9 +229,11 @@ def fnSetOptions():
   return parser
 
 def fnGetOptions(argParser):
+  # NECESSARY OPTIONS
   if len(sys.argv) == 1:
     return argParser.parse_args(['--help'])
 
+  # NECESSARY ARGV
   if len(argParser.parse_args()[1]) == 0:
     return argParser.parse_args(['--help'])
 

@@ -83,6 +83,10 @@ def fnInit(argOptions):
   LOGGER.addHandler(file_handler)
   LOGGER.addHandler(stream_handler)
 
+  if argOptions.o_sConfigFilePath is not None:
+    LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
+    fnGetConfig(parsed_options.o_sConfigFilePath)
+
   return True
 
 #=============================== OptionParser Functions ===============================#
@@ -112,9 +116,11 @@ def fnSetOptions():
   return parser
 
 def fnGetOptions(argParser):
+  # NECESSARY OPTIONS
   if len(sys.argv) == 1:
     return argParser.parse_args(['--help'])
 
+  # NECESSARY ARGV
   if len(argParser.parse_args()[1]) == 0:
     return argParser.parse_args(['--help'])
 
@@ -129,7 +135,5 @@ if __name__ == '__main__':
   (parsed_options, argvs) = fnGetOptions(fnSetOptions())
   if fnInit(parsed_options):
     LOGGER.info('Start %s...' % (PROG_NAME))
-    if fnGetConfig(parsed_options.o_sConfigFilePath):
-      LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
-      fnMain(parsed_options, argvs)
+    fnMain(parsed_options, argvs)
     LOGGER.info('Terminate %s...' % (PROG_NAME))

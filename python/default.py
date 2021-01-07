@@ -44,7 +44,7 @@ def fnGetConfig(argConfigFilePath):
 
   CONFIG = fnReadJsonFile(argConfigFilePath)
   
-  if len(CONFIG) is not 0:
+  if len(CONFIG) != 0:
     return True
   
   return False
@@ -94,7 +94,7 @@ def fnInit(argOptions):
   LOGGER.addHandler(file_handler)
   LOGGER.addHandler(stream_handler)
 
-  if argOptions.o_sConfigFilePath is not None:
+  if argOptions.o_sConfigFilePath != None:
     LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
     fnGetConfig(parsed_options.o_sConfigFilePath)
 

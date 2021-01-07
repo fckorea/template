@@ -152,18 +152,29 @@ def fnGetConfig(argConfigFilePath):
   global LOGGER
   global CONFIG
 
-  try:
-    if os.path.isfile(argConfigFilePath):
-      CONFIG = json.loads(open(argConfigFilePath, encoding='UTF8').read())
-      LOGGER.info(' * Read config data')
-      return True
-    else:
-      LOGGER.error(' * Config file not found.')
-  except:
-    LOGGER.error(' *** Error read config file.')
-    LOGGER.debug(traceback.format_exc())
+  CONFIG = fnReadJsonFile(argConfigFilePath)
+  
+  if len(CONFIG) is not 0:
+    return True
   
   return False
+
+def fnReadJsonFile(argJsonFilePath):
+  global LOGGER
+
+  res = {}
+
+  try:
+    if os.path.isfile(argJsonFilePath):
+      res = json.loads(open(argJsonFilePath, encoding='UTF8').read())
+      LOGGER.info(' * Read json data')
+    else:
+      LOGGER.error(' * json file not found.')
+  except:
+    LOGGER.error(' *** Error read json file.')
+    LOGGER.debug(traceback.format_exc())
+  finally:
+    return res
 
 def fnInit(argOptions):
   global PROG_NAME

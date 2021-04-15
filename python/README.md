@@ -19,7 +19,7 @@
     ## $ virtualenv *VENV_NAME*
     $ virtualenv venv
     ```
-* Start Virtual Environment
+* Active Virtual Environment
   * Linux
     ```
     ## $ source *VENV_NAME*/bin/activate
@@ -31,4 +31,9 @@
     ## > .\*VENV_NAME*\Scripts\activate
     > .\venv\Scripts\activate
     (venv) $ pip list
+    ```
+* Deactive Virtual Environment
+  * Linux & Windows
+    ```
+    $ deactivate
     ```

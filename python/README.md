@@ -28,7 +28,7 @@
     ```
   * Windows
     ```
-    ## > .\*VENV_NAME*\bin\activate
-    > .\venv\bin\activate
+    ## > .\*VENV_NAME*\Scripts\activate
+    > .\venv\Scripts\activate
     (venv) $ pip list
     ```

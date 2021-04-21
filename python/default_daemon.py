@@ -41,7 +41,7 @@ def fnDo():
     LOGGER.info(' * Signal Exit...')
   except:
     LOGGER.error(' *** Daemon error!')
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
   finally:
     LOGGER.info(' * Terminate function...')
   return True
@@ -63,7 +63,7 @@ def fnStartDaemon():
       fnDo()
   except:
     LOGGER.error(' *** Error Start Daemon!!!')
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
 
   return True
 
@@ -92,7 +92,7 @@ def fnStopDaemon():
   except Exception as e:
     LOGGER.error(' *** Error Stop Daemon!!!')
     LOGGER.error(e)
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
 
   return True
 
@@ -120,7 +120,7 @@ def fnStatusDaemon():
   except Exception as e:
     LOGGER.error(' *** Error Status Daemon!!!')
     LOGGER.error(e)
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
 
   return True
 
@@ -172,7 +172,22 @@ def fnReadJsonFile(argJsonFilePath):
       LOGGER.error(' * json file not found.')
   except:
     LOGGER.error(' *** Error read json file.')
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
+  finally:
+    return res
+
+def fnWriteJsonFile(argJsonFilePath, argData):
+  global LOGGER
+
+  res = True
+  
+  try:
+    with open(argJsonFilePath, 'w', encoding='UTF8') as outfile:
+      json.dumps(argData, outfile, indent=2)
+  except:
+    LOGGER.error(' *** Error write json file.')
+    LOGGER.error(traceback.format_exc())
+    res = False
   finally:
     return res
 

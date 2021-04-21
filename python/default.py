@@ -33,7 +33,7 @@ def fnMain(argOptions, argArgs):
     return True
   except:
     LOGGER.error(' *** Error in Main.')
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
   finally:
     return True
 
@@ -62,7 +62,22 @@ def fnReadJsonFile(argJsonFilePath):
       LOGGER.error(' * json file not found.')
   except:
     LOGGER.error(' *** Error read json file.')
-    LOGGER.debug(traceback.format_exc())
+    LOGGER.error(traceback.format_exc())
+  finally:
+    return res
+
+def fnWriteJsonFile(argJsonFilePath, argData):
+  global LOGGER
+
+  res = True
+  
+  try:
+    with open(argJsonFilePath, 'w', encoding='UTF8') as outfile:
+      json.dumps(argData, outfile, indent=2)
+  except:
+    LOGGER.error(' *** Error write json file.')
+    LOGGER.error(traceback.format_exc())
+    res = False
   finally:
     return res
 

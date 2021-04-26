@@ -6,8 +6,8 @@
 #
 # Author:    fckorea
 #
-# Created:    2019-07-27
-# (c) fckorea 2019
+# Created:    YYYY-MM-DD
+# (c) fckorea YYYY
 #-------------------------------------------------------------------------------
 
 import os

@@ -81,23 +81,15 @@ def fnWriteJsonFile(argJsonFilePath, argData):
   finally:
     return res
 
-def fnInit(argOptions):
-  global PROG_NAME
-  global LOGGER
-  global LOG_DIR
-  global LOG_FILENAME
+def fnCreateLogger(argLogDir, argLoggername, argLogLevel, argLogFormat='%(asctime)s [%(levelname)s] %(message)s - %(filename)s:%(lineno)s'):
+  if os.path.isdir(os.path.abspath(argLogDir)) is False:
+    os.mkdir(os.path.abspath(argLogDir))
 
-  if os.path.isdir(os.path.abspath(LOG_DIR)) is False:
-    os.mkdir(os.path.abspath(LOG_DIR))
+  logger = logging.getLogger(argLoggername)
 
-  LOGGER = logging.getLogger(PROG_NAME.replace(' ', ''))
+  logger.setLevel(argLogLevel)
 
-  if argOptions.o_bVerbose is True:
-    LOGGER.setLevel(logging.DEBUG)
-  else:
-    LOGGER.setLevel(logging.INFO)
-
-  formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s - %(filename)s:%(lineno)s')
+  formatter = logging.Formatter(argLogFormat)
   
   file_handler = logging.handlers.TimedRotatingFileHandler(LOG_FILENAME, when='midnight', interval=1, backupCount=7, encoding='UTF-8')
   file_handler.suffix = '%Y%m%d'
@@ -106,8 +98,18 @@ def fnInit(argOptions):
   stream_handler = logging.StreamHandler()
   stream_handler.setFormatter(formatter)
 
-  LOGGER.addHandler(file_handler)
-  LOGGER.addHandler(stream_handler)
+  logger.addHandler(file_handler)
+  logger.addHandler(stream_handler)
+
+  return logger
+
+def fnInit(argOptions):
+  global PROG_NAME
+  global LOGGER
+  global LOG_DIR
+  global LOG_FILENAME
+
+  LOGGER = fnCreateLogger(LOG_DIR, PROG_NAME.replace(' ', ''), logging.DEBUG if argOptions.o_bVerbose is True else logging.INFO)
 
   if argOptions.o_sConfigFilePath != None:
     LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))

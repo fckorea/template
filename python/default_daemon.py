@@ -183,7 +183,7 @@ def fnWriteJsonFile(argJsonFilePath, argData):
   
   try:
     with open(argJsonFilePath, 'w', encoding='UTF8') as outfile:
-      json.dumps(argData, outfile, indent=2)
+      outfile.write(json.dumps(argData, indent=2))
   except:
     LOGGER.error(' *** Error write json file.')
     LOGGER.error(traceback.format_exc())

@@ -1,0 +1,4 @@
+docker/mysql/db/*
+docker/nginx/db/*
+docker/nginx/log/*
+docker/nginx/www/*

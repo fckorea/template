@@ -57,7 +57,7 @@ def fnStartDaemon():
       umask=0o002,
       pidfile=pidfile.TimeoutPIDLockFile(PID_FILENAME)
     )
-    context.files_preserve = [ LOG_FILE_NO ]
+    context.files_preserve = [ LOG_FILE_NO.stream ]
     with context:
       LOGGER.info(' * START Daemon!')
       fnDo()

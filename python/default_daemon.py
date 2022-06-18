@@ -57,7 +57,7 @@ def fnStartDaemon():
       umask=0o002,
       pidfile=pidfile.TimeoutPIDLockFile(PID_FILENAME)
     )
-    context.files_preserve = LOG_FILE_NO
+    context.files_preserve = [ LOG_FILE_NO ]
     with context:
       LOGGER.info(' * START Daemon!')
       fnDo()
@@ -134,14 +134,21 @@ def fnMain(argOptions, argArgs):
     if cmd == 'start':
       if fnGetConfig(parsed_options.o_sConfigFilePath):
         LOGGER.info('Config file("%s")' % (parsed_options.o_sConfigFilePath))
-        fnStartDaemon()
+        if argOptions.o_bTest:
+          LOGGER.info('TEST MODE!')
+          fnDo()
+        else:
+          fnStartDaemon()
     elif cmd == 'stop':
-      fnStopDaemon()
+      if argOptions.o_bTest is not True:
+        fnStopDaemon()
     elif cmd == 'restart':
-      fnStopDaemon()
-      fnStartDaemon()
+      if argOptions.o_bTest is not True:
+        fnStopDaemon()
+        fnStartDaemon()
     elif cmd == 'status':
-      fnStatusDaemon()
+      if argOptions.o_bTest is not True:
+        fnStatusDaemon()
 
     return True
   except:
@@ -192,6 +199,8 @@ def fnWriteJsonFile(argJsonFilePath, argData):
     return res
 
 def fnCreateLogger(argLogDir, argLoggername, argLogLevel, argLogFormat='%(asctime)s [%(levelname)s] %(message)s - %(filename)s:%(lineno)s'):
+  global LOG_FILE_NO
+
   if os.path.isdir(os.path.abspath(argLogDir)) is False:
     os.mkdir(os.path.abspath(argLogDir))
 
@@ -210,6 +219,8 @@ def fnCreateLogger(argLogDir, argLoggername, argLogLevel, argLogFormat='%(asctim
 
   logger.addHandler(file_handler)
   logger.addHandler(stream_handler)
+
+  LOG_FILE_NO = file_handler
 
   return logger
 
@@ -237,6 +248,7 @@ def fnSetOptions():
   options = [
     { 'Param': ('-c', '--config'), 'action': 'store', 'type': 'string', 'dest': 'o_sConfigFilePath', 'default': 'config.conf', 'metavar': '<Config file path>', 'help': 'Set config file path.\t\tdefault) config.conf (contents type is JSON)' },
     { 'Param': ('-v', '--verbose'), 'action': 'store_true', 'dest': 'o_bVerbose', 'default': False, 'metavar': '<Verbose Mode>', 'help': 'Set verbose mode.\t\tdefault) False' },
+    { 'Param': ('', '--test'), 'action': 'store_true', 'dest': 'o_bTest', 'default': False, 'metavar': '<Test Mode>', 'help': 'Set Test mode.\t\tdefault) False' },
     { 'Param': ('-t', '--true'), 'action': 'store_true', 'dest': 'o_bTrue', 'default': False, 'metavar': '<Bool>', 'help': 'Set bool.\t\tdefault) False' },
     { 'Param': ('-f', '--false'), 'action': 'store_false', 'dest': 'o_bFalse', 'default': True, 'metavar': '<Bool>', 'help': 'Set bool.\t\tdefault) True' },
     { 'Param': ('-s', '--string'), 'action': 'store', 'type': 'string', 'dest': 'o_sString', 'metavar': '<String>', 'help': 'Set string.' },
